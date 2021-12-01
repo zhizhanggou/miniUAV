@@ -8,11 +8,13 @@ project(trochilus LANGUAGES NONE)
 #     PATHS "${DEFAULT_GCC_ARM_PATH}" ENV PATHS NO_DEFAULT_PATH)
 # find_program(GCC_ARM_C_COMPILER arm-none-eabi-size
 #     PATHS "${DEFAULT_GCC_ARM_PATH}" ENV PATHS NO_DEFAULT_PATH)
+set(CMAKE_CXX_COMPILER arm-none-eabi-g++)
 set(CMAKE_C_COMPILER arm-none-eabi-gcc)
 set(CMAKE_ASM_COMPILER arm-none-eabi-gcc)
 set(CMAKE_OBJCOPY arm-none-eabi-objcopy)
 set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 
+set(CMAKE_CXX_FLAGS "-mcpu=cortex-m4 -std=gnu++11 -g3 -DUSE_HAL_DRIVER -DSTM32F411xE -DDEBUG -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb")
 set(CMAKE_C_FLAGS "-mcpu=cortex-m4 -std=gnu11 -g3 -DUSE_HAL_DRIVER -DSTM32F411xE -DDEBUG -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb")
 set(CMAKE_ASM_FLAGS "-mcpu=cortex-m4 -g3 -x assembler-with-cpp --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb")
 
@@ -24,14 +26,14 @@ set(STARTUP_DIR ${CMAKE_SOURCE_DIR}/Startup)
 set(TOOLS_DIR ${CMAKE_SOURCE_DIR}/tools)
 
 
-enable_language(C ASM)
+enable_language(CXX C ASM)
 
 set(CMAKE_EXECUTABLE_SUFFIX ".elf")
 
 set(target "trochilus")
 
 file(GLOB APP_SOURCE_FILES
-    ${SRC_DIR}/main.c
+    ${SRC_DIR}/main.cpp
     ${SRC_DIR}/stm32f4xx_hal_msp.c
     ${SRC_DIR}/stm32f4xx_it.c
     ${SRC_DIR}/syscalls.c
@@ -59,6 +61,8 @@ file(GLOB APP_SOURCE_FILES
     ${LIB_DIR}/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.c
     ${LIB_DIR}/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c
     ${LIB_DIR}/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c
+    
+
 )
 
 add_executable(${target} 
@@ -71,7 +75,12 @@ set(APP_INCLUDE_DIRS
     ${LIB_DIR}/CMSIS/Include
     ${LIB_DIR}/CMSIS/Device/ST/STM32F4xx/Include
     ${LIB_DIR}/STM32F4xx_HAL_Driver/Inc
+    
     ${INC_DIR}
+)
+
+target_compile_definitions(${target} PUBLIC
+    
 )
 
 target_include_directories(${target} PUBLIC
@@ -110,3 +119,4 @@ add_custom_command(
 
 
 add_subdirectory(FreeRTOS)
+add_subdirectory(vfs)

@@ -10,7 +10,7 @@ set(SOURCES
     ${RTOS_PATH}/timers.c
 
     ${RTOS_PATH}/portable/GCC/ARM_CM4F/port.c
-    ${RTOS_PATH}/portable/MemMang/heap_4.c
+    ${RTOS_PATH}/portable/MemMang/heap_3.c
     ${RTOS_PATH}/CMSIS_RTOS_V2/cmsis_os2.c
     )
 

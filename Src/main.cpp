@@ -138,8 +138,8 @@ int main( void )
 
     /* Create the thread(s) */
     /* definition and creation of defaultTask */
-    const osThreadAttr_t defaultTask_attributes = { .name = "defaultTask", .priority = ( osPriority_t )osPriorityNormal, .stack_size = 128 };
-    defaultTaskHandle                           = osThreadNew( StartDefaultTask, NULL, &defaultTask_attributes );
+    const osThreadAttr_t defaultTask_attributes = { .name = "defaultTask", .stack_size = 128, .priority = ( osPriority_t )osPriorityNormal };
+    defaultTaskHandle                           = osThreadNew( StartDefaultTask, nullptr, &defaultTask_attributes );
 
     /* USER CODE BEGIN RTOS_THREADS */
     /* add threads, ... */
