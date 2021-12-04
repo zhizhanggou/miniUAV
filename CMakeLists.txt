@@ -22,6 +22,7 @@ set(CMAKE_ASM_FLAGS "-mcpu=cortex-m4 -g3 -x assembler-with-cpp --specs=nano.spec
 set(INC_DIR ${CMAKE_SOURCE_DIR}/Inc)
 set(LIB_DIR ${CMAKE_SOURCE_DIR}/Lib)
 set(SRC_DIR ${CMAKE_SOURCE_DIR}/Src)
+set(VFS_DIR ${CMAKE_SOURCE_DIR}/Vfs)
 set(STARTUP_DIR ${CMAKE_SOURCE_DIR}/Startup)
 set(TOOLS_DIR ${CMAKE_SOURCE_DIR}/tools)
 
@@ -70,6 +71,7 @@ add_executable(${target}
 )
 
 target_link_libraries(${target} PUBLIC freertos)
+target_link_libraries(${target} PUBLIC vfslib)
 set(APP_INCLUDE_DIRS
     ${LIB_DIR}/STM32F4xx_HAL_Driver/Inc/Legacy
     ${LIB_DIR}/CMSIS/Include
@@ -77,6 +79,8 @@ set(APP_INCLUDE_DIRS
     ${LIB_DIR}/STM32F4xx_HAL_Driver/Inc
     
     ${INC_DIR}
+
+    ${VFS_DIR}
 )
 
 target_compile_definitions(${target} PUBLIC
@@ -119,4 +123,4 @@ add_custom_command(
 
 
 add_subdirectory(FreeRTOS)
-add_subdirectory(vfs)
+add_subdirectory(Vfs)

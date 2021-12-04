@@ -4,42 +4,44 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+#include "err.h"
+#include <stdarg.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
 
 #define VFS_PATH_MAX 20
 #define VFS_MAX_COUNT 64
-
+#define MAX_FDS 1024
 typedef struct {
     int flags; /*!< ESP_VFS_FLAG_CONTEXT_PTR or ESP_VFS_FLAG_DEFAULT */
     union {
-        ssize_t ( *write_p )( void* p, int fd, const void* data, size_t size ); /*!< Write with context pointer */
-        ssize_t ( *write )( int fd, const void* data, size_t size );            /*!< Write without context pointer */
+        ssize_t (*write_p)(void* p, int fd, const void* data, size_t size); /*!< Write with context pointer */
+        ssize_t (*write)(int fd, const void* data, size_t size);            /*!< Write without context pointer */
     };
     // union {
     //     off_t (*lseek_p)(void* p, int fd, off_t size, int mode);                                     /*!< Seek with context pointer */
     //     off_t (*lseek)(int fd, off_t size, int mode);                                                /*!< Seek without context pointer */
     // };
     union {
-        ssize_t ( *read_p )( void* ctx, int fd, void* dst, size_t size ); /*!< Read with context pointer */
-        ssize_t ( *read )( int fd, void* dst, size_t size );              /*!< Read without context pointer */
+        ssize_t (*read_p)(void* ctx, int fd, void* dst, size_t size); /*!< Read with context pointer */
+        ssize_t (*read)(int fd, void* dst, size_t size);              /*!< Read without context pointer */
+    };
+    // union {
+    //     ssize_t (*pread_p)(void* ctx, int fd, void* dst, size_t size, off_t offset); /*!< pread with context pointer */
+    //     ssize_t (*read)(int fd, void* dst, size_t size, off_t offset);               /*!< pread without context pointer */
+    // };
+    // union {
+    //     ssize_t (*pwrite_p)(void* ctx, int fd, const void* src, size_t size, off_t offset); /*!< pwrite with context pointer */
+    //     ssize_t (*write)(int fd, const void* src, size_t size, off_t offset);               /*!< pwrite without context pointer */
+    // };
+    union {
+        int (*open_p)(void* ctx, const char* path, int flags, int mode); /*!< open with context pointer */
+        int (*open)(const char* path, int flags, int mode);              /*!< open without context pointer */
     };
     union {
-        ssize_t ( *pread_p )( void* ctx, int fd, void* dst, size_t size, off_t offset ); /*!< pread with context pointer */
-        ssize_t ( *pread )( int fd, void* dst, size_t size, off_t offset );              /*!< pread without context pointer */
-    };
-    union {
-        ssize_t ( *pwrite_p )( void* ctx, int fd, const void* src, size_t size, off_t offset ); /*!< pwrite with context pointer */
-        ssize_t ( *pwrite )( int fd, const void* src, size_t size, off_t offset );              /*!< pwrite without context pointer */
-    };
-    union {
-        int ( *open_p )( void* ctx, const char* path, int flags, int mode ); /*!< open with context pointer */
-        int ( *open )( const char* path, int flags, int mode );              /*!< open without context pointer */
-    };
-    union {
-        int ( *close_p )( void* ctx, int fd ); /*!< close with context pointer */
-        int ( *close )( int fd );              /*!< close without context pointer */
+        int (*close_p)(void* ctx, int fd); /*!< close with context pointer */
+        int (*close)(int fd);              /*!< close without context pointer */
     };
     // union {
     //     int ( *fstat_p )( void* ctx, int fd, struct stat* st ); /*!< fstat with context pointer */
@@ -95,20 +97,24 @@ typedef struct {
     //         int ( *rmdir )( const char* name );              /*!< rmdir without context pointer */
     //     };
     // #endif  // CONFIG_VFS_SUPPORT_DIR
-    // union {
-    //     int ( *ioctl_p )( void* ctx, int fd, int cmd, va_list args ); /*!< ioctl with context pointer */
-    //     int ( *ioctl )( int fd, int cmd, va_list args );              /*!< ioctl without context pointer */
-    // };
+    union {
+        int (*ioctl_p)(void* ctx, int fd, int cmd, va_list args); /*!< ioctl with context pointer */
+        int (*ioctl)(int fd, int cmd, va_list args);              /*!< ioctl without context pointer */
+    };
 
 } vfs_t;
 
 typedef struct vfs_entry_ {
-    vfs_t  vfs;                          // contains pointers to VFS functions
-    char   path_prefix[ VFS_PATH_MAX ];  // path prefix mapped to this VFS
-    size_t path_prefix_len;              // micro-optimization to avoid doing extra strlen
-    void*  ctx;                          // optional pointer which can be passed to VFS
-    int    offset;                       // index of this structure in s_vfs array
+    vfs_t  vfs;                        // contains pointers to VFS functions
+    char   path_prefix[VFS_PATH_MAX];  // path prefix mapped to this VFS
+    size_t path_prefix_len;            // micro-optimization to avoid doing extra strlen
+    void*  ctx;                        // optional pointer which can be passed to VFS
+    int    offset;                     // index of this structure in s_vfs array
 } vfs_entry_t;
+
+err_t vfs_init();
+err_t esp_vfs_register(const char* base_path, const vfs_t* vfs, void* ctx);
+void  vfs_list(void);
 
 #ifdef __cplusplus
 }

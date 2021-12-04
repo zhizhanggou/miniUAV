@@ -1,4 +1,4 @@
-set(VFS_PATH ${CMAKE_SOURCE_DIR}/vfs)
+set(VFS_PATH ${CMAKE_SOURCE_DIR}/Vfs)
 set(SOURCES 
     ${VFS_PATH}/vfs.c
     # ${VFS_PATH}/vfs_uart.c
@@ -9,6 +9,8 @@ set(SOURCES
 
 set(VFS_INCLUDE_DIRS
     ../Inc
+    ../FreeRTOS/include
+    ../FreeRTOS/portable/GCC/ARM_CM4F
 )
 
 add_library(vfslib ${SOURCES})
