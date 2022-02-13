@@ -13,7 +13,8 @@ extern "C" {
 #define VFS_PATH_MAX 20
 #define VFS_MAX_COUNT 64
 #define MAX_FDS 1024
-typedef struct {
+typedef struct
+{
     int flags; /*!< ESP_VFS_FLAG_CONTEXT_PTR or ESP_VFS_FLAG_DEFAULT */
     union {
         ssize_t (*write_p)(void* p, int fd, const void* data, size_t size); /*!< Write with context pointer */
@@ -104,7 +105,8 @@ typedef struct {
 
 } vfs_t;
 
-typedef struct vfs_entry_ {
+typedef struct vfs_entry_
+{
     vfs_t  vfs;                        // contains pointers to VFS functions
     char   path_prefix[VFS_PATH_MAX];  // path prefix mapped to this VFS
     size_t path_prefix_len;            // micro-optimization to avoid doing extra strlen
@@ -113,7 +115,7 @@ typedef struct vfs_entry_ {
 } vfs_entry_t;
 
 err_t vfs_init();
-err_t esp_vfs_register(const char* base_path, const vfs_t* vfs, void* ctx);
+err_t vfs_register(const char* base_path, const vfs_t* vfs, void* ctx);
 void  vfs_list(void);
 
 #ifdef __cplusplus

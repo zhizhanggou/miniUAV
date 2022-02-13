@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.10)
 set(CMAKE_SYSTEM_NAME  "Generic")
 project(trochilus LANGUAGES NONE)
 
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
+
+
 # find_program(GCC_ARM_C_COMPILER arm-none-eabi-gcc
 #     PATHS "${DEFAULT_GCC_ARM_PATH}" ENV PATHS NO_DEFAULT_PATH)
 # find_program(GCC_ARM_C_COMPILER arm-none-eabi-objcopy
@@ -25,7 +28,11 @@ set(SRC_DIR ${CMAKE_SOURCE_DIR}/Src)
 set(VFS_DIR ${CMAKE_SOURCE_DIR}/Vfs)
 set(STARTUP_DIR ${CMAKE_SOURCE_DIR}/Startup)
 set(TOOLS_DIR ${CMAKE_SOURCE_DIR}/tools)
+set(BOARDS_DIR ${CMAKE_SOURCE_DIR}/boards)
+set(DRIVERS_DIR ${CMAKE_SOURCE_DIR}/Drivers)
+set(COMMON_DIR ${CMAKE_SOURCE_DIR}/common)
 
+include(jlink)
 
 enable_language(CXX C ASM)
 
@@ -42,6 +49,12 @@ file(GLOB APP_SOURCE_FILES
     ${SRC_DIR}/system_stm32f4xx.c
     
     ${STARTUP_DIR}/startup_stm32f411ceux.s
+
+    ${DRIVERS_DIR}/drv_serial.c
+
+    ${BOARDS_DIR}/trochilus_v1/board_config.c
+
+    ${COMMON_DIR}/ringbuffer.c
 
     ${LIB_DIR}/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.c
     ${LIB_DIR}/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma_ex.c
@@ -81,6 +94,9 @@ set(APP_INCLUDE_DIRS
     ${INC_DIR}
 
     ${VFS_DIR}
+    ${BOARDS_DIR}
+    ${DRIVERS_DIR}
+    ${COMMON_DIR}
 )
 
 target_compile_definitions(${target} PUBLIC
@@ -120,7 +136,7 @@ add_custom_command(
     BYPRODUCTS ${CMAKE_BINARY_DIR}/${target}.hex
 )
 
-
+add_flash_target(${target})
 
 add_subdirectory(FreeRTOS)
 add_subdirectory(Vfs)

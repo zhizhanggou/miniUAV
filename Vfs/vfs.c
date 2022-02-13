@@ -10,7 +10,7 @@
     if(pvfs->vfs.func == NULL) {             \
         return -1;                           \
     }                                        \
-    ret = ( *pvfs->vfs.func )(__VA_ARGS__);
+    ret = (*pvfs->vfs.func)(__VA_ARGS__);
 
 #define FD_TABLE_ENTRY_UNUSED                                                                                        \
     (fd_table_t)                                                                                                     \
@@ -21,7 +21,8 @@
 
 typedef int8_t  vfs_index_t;
 typedef uint8_t local_fd_t;
-typedef struct {
+typedef struct
+{
     bool        permanent : 1;
     bool        has_pending_close : 1;
     bool        has_pending_select : 1;
@@ -89,7 +90,7 @@ err_t vfs_register_common(const char* base_path, size_t len, const vfs_t* vfs, v
     return OK;
 }
 
-err_t esp_vfs_register(const char* base_path, const vfs_t* vfs, void* ctx)
+err_t vfs_register(const char* base_path, const vfs_t* vfs, void* ctx)
 {
     return vfs_register_common(base_path, strlen(base_path), vfs, ctx, NULL);
 }
