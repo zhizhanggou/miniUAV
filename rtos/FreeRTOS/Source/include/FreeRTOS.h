@@ -1,6 +1,6 @@
 /*
- * FreeRTOS Kernel V10.3.1
- * Copyright (C) 2020 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
+ * FreeRTOS Kernel V10.2.1
+ * Copyright (C) 2019 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -241,11 +241,11 @@ extern "C" {
 	#define configASSERT_DEFINED 1
 #endif
 
-/* configPRECONDITION should be defined as configASSERT.
-The CBMC proofs need a way to track assumptions and assertions.
-A configPRECONDITION statement should express an implicit invariant or
-assumption made.  A configASSERT statement should express an invariant that must
-hold explicit before calling the code. */
+/* configPRECONDITION should be resolve to configASSERT.
+   The CBMC proofs need a way to track assumptions and assertions.
+   A configPRECONDITION statement should express an implicit invariant or assumption made.
+   A configASSERT statement should express an invariant that must hold explicit before calling
+   the code. */
 #ifndef configPRECONDITION
 	#define configPRECONDITION( X ) configASSERT(X)
 	#define configPRECONDITION_DEFINED 0
@@ -255,10 +255,6 @@ hold explicit before calling the code. */
 
 #ifndef portMEMORY_BARRIER
 	#define portMEMORY_BARRIER()
-#endif
-
-#ifndef portSOFTWARE_BARRIER
-	#define portSOFTWARE_BARRIER()
 #endif
 
 /* The timers module relies on xTaskGetSchedulerState(). */
@@ -799,7 +795,7 @@ hold explicit before calling the code. */
 #endif
 
 #ifndef configUSE_STATS_FORMATTING_FUNCTIONS
-	#define configUSE_STATS_FORMATTING_FUNCTIONS 0
+	#define configUSE_STATS_FORMATTING_FUNCTIONS 1
 #endif
 
 #ifndef portASSERT_IF_INTERRUPT_PRIORITY_INVALID
@@ -835,7 +831,7 @@ hold explicit before calling the code. */
 #endif
 
 #ifndef configUSE_POSIX_ERRNO
-	#define configUSE_POSIX_ERRNO 0
+	#define configUSE_POSIX_ERRNO 1
 #endif
 
 #ifndef portTICK_TYPE_IS_ATOMIC
@@ -953,7 +949,6 @@ V8 if desired. */
 	#define pcTimerGetTimerName pcTimerGetName
 	#define pcQueueGetQueueName pcQueueGetName
 	#define vTaskGetTaskInfo vTaskGetInfo
-	#define xTaskGetIdleRunTimeCounter ulTaskGetIdleRunTimeCounter
 
 	/* Backward compatibility within the scheduler code only - these definitions
 	are not really required but are included for completeness. */
