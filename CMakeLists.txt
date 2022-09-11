@@ -32,7 +32,7 @@ set(BOARDS_DIR ${CMAKE_SOURCE_DIR}/boards)
 set(DRIVERS_DIR ${CMAKE_SOURCE_DIR}/Drivers)
 set(COMMON_DIR ${CMAKE_SOURCE_DIR}/common)
 
-include(jlink)
+include(programmer)
 
 enable_language(CXX C ASM)
 
