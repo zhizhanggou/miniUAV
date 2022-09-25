@@ -7,10 +7,20 @@
 #include <string.h>
 
 #define CHECK_AND_CALL(ret, pvfs, func, ...) \
-    if(pvfs->vfs.func == NULL) {             \
-        return -1;                           \
-    }                                        \
-    ret = (*pvfs->vfs.func)(__VA_ARGS__);
+    do{                                      \
+        if(pvfs->vfs.func == NULL) {         \
+            return -1;                       \
+        }                                    \
+        ret = (*pvfs->vfs.func)(__VA_ARGS__);\
+    } while(0)
+
+
+#define CHECK_OR_CALL(ret, pvfs, func, ...)         \
+    do{                                             \
+        if(pvfs->vfs.func != NULL) {                \
+            ret = (*pvfs->vfs.func)(__VA_ARGS__);   \
+        }                                           \
+    } while(0)
 
 #define FD_TABLE_ENTRY_UNUSED                                                                                        \
     (fd_table_t)                                                                                                     \
@@ -187,7 +197,7 @@ int vfs_open(const char* path, int flags, int mode)
     }
     const char* path_within_vfs = translate_path(vfs, path);
     int         fd_within_vfs;
-    CHECK_AND_CALL(fd_within_vfs, vfs, open, path_within_vfs, flags, mode);
+    CHECK_OR_CALL(fd_within_vfs, vfs, open, path_within_vfs, flags, mode);
     if(fd_within_vfs >= 0) {
         if(xSemaphoreTake(s_fd_table_lock, portMAX_DELAY) != pdPASS) {
             return FAIL;
@@ -208,7 +218,7 @@ int vfs_open(const char* path, int flags, int mode)
         }
 
         int ret;
-        CHECK_AND_CALL(ret, vfs, close, fd_within_vfs);
+        CHECK_OR_CALL(ret, vfs, close, fd_within_vfs);
         ( void )ret;  // remove "set but not used" warning
         return FAIL;
     }
@@ -223,7 +233,7 @@ int vfs_close(int fd)
         return FAIL;
     }
     int ret;
-    CHECK_AND_CALL(ret, vfs, close, local_fd);
+    CHECK_OR_CALL(ret, vfs, close, local_fd);
 
     if(xSemaphoreTake(s_fd_table_lock, portMAX_DELAY) != pdPASS) {
         return FAIL;

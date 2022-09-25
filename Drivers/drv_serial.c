@@ -37,7 +37,7 @@ drv_serial m_serials[] = {
 
 static vfs_t m_serial_ops = {
 
-    .write = serial_write, .read = NULL, .open = serial_open, .close = NULL, .ioctl = NULL
+    .write = serial_write, .read = NULL, .open = NULL, .close = NULL, .ioctl = NULL
 };
 
 static void uart_tx_callback(UART_HandleTypeDef* huart)
@@ -81,9 +81,9 @@ int drv_serial_init()
             vfs_register("/dev/console", &m_serial_ops, &m_serials[i]);
             vfs_open("/dev/console", O_RDONLY);
             vfs_open("/dev/console", O_WRONLY);
-            vfs_open("/dev/console", O_WRONLY);
-            vfs_write(STDOUT_FILENO, "hello world\n", 12);
-            // HAL_UART_Transmit_DMA(&m_serials[i].usart, "dev->tx_dma_trans_buf", sizeof("dev->tx_dma_trans_buf"));
+            // vfs_open("/dev/console", O_WRONLY);
+            // vfs_write(STDOUT_FILENO, "hello world\n", 12);
+            HAL_UART_Transmit_DMA(&m_serials[i].usart, "dev->tx_dma_trans_buf", sizeof("dev->tx_dma_trans_buf"));
         }
         else {
             sprintf(path, "/dev/ttyS%d", i);
@@ -93,10 +93,10 @@ int drv_serial_init()
     return 0;
 }
 
-static int serial_open(void* ctx, const char* path, int flags, int mode)
-{
-    return 0;
-}
+// static int serial_open(void* ctx, const char* path, int flags, int mode)
+// {
+//     return 0;
+// }
 
 static int serial_write(void* ctx, int fd, const void* data, size_t size)
 {
