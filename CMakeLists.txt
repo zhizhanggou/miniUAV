@@ -24,5 +24,6 @@ set_property(GLOBAL PROPERTY PROJECT_LIBRARIES_INTERFACE "")
 add_library(trochilus_global INTERFACE)
 set_property(GLOBAL APPEND PROPERTY PROJECT_LIBRARIES trochilus_global)
 
+add_subdirectory(Components)
 add_subdirectory(boards)
 add_subdirectory(User)

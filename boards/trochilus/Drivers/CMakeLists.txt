@@ -11,7 +11,7 @@ set(incs
 )
 
 ex_add_library(
-    LIBNAME Drivers
+    LIBNAME drv
     SRCS ${srcs}
     INCLUDES ${incs}
 )

@@ -1,8 +1,9 @@
 #include "drv_serial.h"
-#include "board.h"
+// #include "board.h"
 #include "vfs.h"
 #include <fcntl.h>
 #include <unistd.h>
+#include "usart.h"
 
 #define IS_IRQ_MASKED() ((__get_PRIMASK() != 0U) || ((__get_BASEPRI() != 0U)))
 #define IS_IRQ_MODE() (__get_IPSR() != 0U)
@@ -18,7 +19,7 @@ static uint8_t m_usart1rxbuffer[CONFIG_USART1_RXBUFSIZE];
 
 drv_serial m_serials[] = {
 #if defined(CONFIG_USART1)
-    { .usart.Instance          = USART1,
+    { .usart.Instance          = &huart1,
       .usart.Init.BaudRate     = CONFIG_USART1_BAUDRATE,
       .usart.Init.WordLength   = UART_WORDLENGTH_8B,
       .usart.Init.StopBits     = UART_STOPBITS_1,
@@ -77,7 +78,7 @@ int drv_serial_init()
         ringbuf_init(m_serials[i].tx_dma_ringbuf);
         HAL_UART_RegisterCallback(&m_serials[i].usart, HAL_UART_TX_COMPLETE_CB_ID, uart_tx_callback);
 
-        if(m_serials[i].usart.Instance == CONFIG_CONSOLE_UART) {
+        if(m_serials[i].usart.Instance == &CONFIG_CONSOLE_UART) {
             vfs_register("/dev/console", &m_serial_ops, &m_serials[i]);
             vfs_open("/dev/console", O_RDONLY);
             vfs_open("/dev/console", O_WRONLY);

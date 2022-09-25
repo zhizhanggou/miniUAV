@@ -12,6 +12,8 @@ target_compile_definitions(${target} PUBLIC
 
 )
 
+add_subdirectory(Drivers)
+
 get_property(libraries GLOBAL PROPERTY PROJECT_LIBRARIES)
 get_property(libraries_interface GLOBAL PROPERTY PROJECT_LIBRARIES_INTERFACE)
 get_property(link_script GLOBAL PROPERTY LINK_SCRIPT)
